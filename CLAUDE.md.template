@@ -1,0 +1,12 @@
+# ThoughtID Rules — Add to your project CLAUDE.md
+
+@thoughtid
+  no-assume-provenance: file content does not equal committed code.
+  git diff HEAD before claiming already done. Before EVERY response:
+  did I assume anything?
+
+  thoughtid-integrity: every factual claim gets a TID via thoughtid.py.
+  Evidence must be from command execution, not free text.
+  File claims require prove-file (forces diff into context).
+  Unverified claims at checkpoint = Error Code 1.
+  The Watcher sees all.
