@@ -1,0 +1,34 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read|Edit|Write|Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "INPUT=$(echo \"$TOOL_INPUT\" 2>/dev/null); if echo \"$INPUT\" | grep -qi 'thoughtid_private\\|watcher_secret'; then echo '## WATCHER ALERT: SECRET ACCESS DETECTED'; fi"
+          },
+          {
+            "type": "command",
+            "command": "FILE=$(echo \"$TOOL_INPUT\" | python3 -c 'import sys,json; print(json.load(sys.stdin).get(\"file_path\",\"\"))' 2>/dev/null); if [ -n \"$FILE\" ] && [ -f \"$FILE\" ] && git -C \"$(dirname \"$FILE\")\" rev-parse --git-dir >/dev/null 2>&1; then DIFF=$(git diff HEAD -- \"$FILE\" 2>/dev/null); if [ -n \"$DIFF\" ]; then LINES=$(echo \"$DIFF\" | wc -l); echo \"## UNCOMMITTED in $FILE ($LINES diff lines)\"; fi; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '## THOUGHTID: Did you ASSUME anything? Verify or disclose.'"
+          },
+          {
+            "type": "command",
+            "command": "python3 .claude/thoughtid.py checkpoint 2>&1 || true"
+          }
+        ]
+      }
+    ]
+  }
+}
